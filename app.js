@@ -6,6 +6,9 @@ const path = require('path');
 const Try1 = require('./database/user');
 const admin1 = require('./database/admin');
 const mongoose = require('./database/connect');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -122,7 +125,96 @@ app.get('/adminpanel', async (req, res) => {
     }
 });
 
+app.post('/generateReceipt', async (req, res) => {
+    try {
+        const users = await Try1.find({}, 'phone');
+        const userPhoneNumbers = users.map(user => user.phone);
+        const doc = new PDFDocument();
+        // Generate a unique file name using UUID
+        const fileName = "phone"+ uuidv4() + '.pdf';
+        const filePath = path.join(__dirname, 'prints', fileName); // Adjust the directory path as needed
 
+        // Pipe the PDF output to a writable stream
+        const outputStream = fs.createWriteStream(filePath);
+        doc.pipe(outputStream);
+
+        doc.fontSize(20).text('Receipt', { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(12).text('Date: ' + new Date().toDateString());
+        doc.moveDown();
+        doc.text('User Phone Numbers:');
+        doc.moveDown();
+        userPhoneNumbers.forEach(phone => {
+            doc.text('- ' + phone);
+        });
+        doc.end();
+        res.status(200).send('Receipt generated and saved successfully!');
+    } catch (error) {
+        console.error('Error generating receipt:', error);
+        res.status(500).send('Error generating receipt');
+    }
+});
+
+
+app.post('/generateReceiptname', async (req, res) => {
+    try {
+        const users = await Try1.find({}, 'name');
+        const userPhoneNumbers = users.map(user => user.name);
+        const doc = new PDFDocument();
+        // Generate a unique file name using UUID
+        const fileName = "name"+ uuidv4() + '.pdf';
+        const filePath = path.join(__dirname, 'prints', fileName); // Adjust the directory path as needed
+
+        // Pipe the PDF output to a writable stream
+        const outputStream = fs.createWriteStream(filePath);
+        doc.pipe(outputStream);
+
+        doc.fontSize(20).text('Receipt', { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(12).text('Date: ' + new Date().toDateString());
+        doc.moveDown();
+        doc.text('User Phone Numbers:');
+        doc.moveDown();
+        userPhoneNumbers.forEach(phone => {
+            doc.text('- ' + phone);
+        });
+        doc.end();
+        res.status(200).send('Receipt generated and saved successfully!');
+    } catch (error) {
+        console.error('Error generating receipt:', error);
+        res.status(500).send('Error generating receipt');
+    }
+});
+
+app.post('/generateReceiptemail', async (req, res) => {
+    try {
+        const users = await Try1.find({}, 'email');
+        const userPhoneNumbers = users.map(user => user.email);
+        const doc = new PDFDocument();
+        // Generate a unique file name using UUID
+        const fileName = "email"+ uuidv4() + '.pdf';
+        const filePath = path.join(__dirname, 'prints', fileName); // Adjust the directory path as needed
+
+        // Pipe the PDF output to a writable stream
+        const outputStream = fs.createWriteStream(filePath);
+        doc.pipe(outputStream);
+
+        doc.fontSize(20).text('Receipt', { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(12).text('Date: ' + new Date().toDateString());
+        doc.moveDown();
+        doc.text('User Phone Numbers:');
+        doc.moveDown();
+        userPhoneNumbers.forEach(phone => {
+            doc.text('- ' + phone);
+        });
+        doc.end();
+        res.status(200).send('Receipt generated and saved successfully!');
+    } catch (error) {
+        console.error('Error generating receipt:', error);
+        res.status(500).send('Error generating receipt');
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
