@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
-const uri = 'mongodb://127.0.0.1:27017/';
-const dbName = 'test';
-
-mongoose.connect(uri + dbName, { useNewUrlParser: true, useUnifiedTopology: true })
+const dotenv = require('dotenv');
+dotenv.config();
+const MONGODB_URI = process.env.MONGODB_URI;
+mongoose.connect(MONGODB_URI,{ useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        console.log('Connected to MongoDB');
+        console.log('Connected to MongoDB Atlas');
     })
-    .catch((error) => {
-        console.error('Error connecting to MongoDB:', error);
+    .catch((err) => {
+        console.log('Error: ', err);
     });
-
 module.exports = mongoose;
